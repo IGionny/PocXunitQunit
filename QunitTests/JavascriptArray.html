@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <title>Javascript Array Functions compared with C# Linq</title>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/qunit.js"></script>
+  <link href="css/qunit.css" rel="stylesheet" />
+</head>
+
+<body>
+  <h1 id="qunit-header">
+    Javascript Array Functions compared with C# Linq
+  </h1>
+  <h2 id="qunit-banner"></h2>
+
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <script type="text/javascript" language="javascript">
+
+    QUnit.done(function (details) {
+      resultQunit = details;
+      //console.log( "Total: ", details.total, " Failed: ", details.failed, " Passed: ", details.passed, " Runtime: ", details.runtime );
+    });
+
+    /**
+     * Resource: https://gist.github.com/DanDiplo/30528387da41332ff22b
+     */
+
+    // Here's a simple array of "person" objects
+    var people = [
+      { name: "John", age: 20 },
+      { name: "Mary", age: 35 },
+      { name: "Arthur", age: 78 },
+      { name: "Mike", age: 27 },
+      { name: "Judy", age: 42 },
+      { name: "Tim", age: 8 }
+    ];
+
+    module("Compare with Linq ");
+    test("Where", function () {
+
+      //Arrange
+      var expectedValue = [{ name: "John", age: 20 },
+      { name: "Mike", age: 27 },
+      { name: "Tim", age: 8 }];
+
+      //Act
+      var youngsters = people.filter(function (item) {
+        return item.age < 30;
+      });
+
+      //Assert
+      deepEqual(youngsters, expectedValue);
+    });
+
+    test("Select", function () {
+
+      //Arrange
+      var expectedValue = [
+        "John",
+        "Mary",
+        "Arthur",
+        "Mike",
+        "Judy",
+        "Tim"
+      ];
+
+      //Act
+      var names = people.map(function (item) {
+        return item.name;
+      });
+
+      //Assert
+      deepEqual(names, expectedValue);
+    });
+
+    test("All", function () {
+
+      //Arrange
+      var expectedValue = false;
+
+      //Act
+      var allUnder40 = people.every(function (item) {
+        return item.age < 40;
+      });
+
+      //Assert
+      equal(allUnder40, expectedValue);
+    });
+
+    test("Any", function () {
+
+      //Arrange
+      var expectedValue = true;
+
+      //Act
+      var anyUnder30 = people.some(function (item) {
+        return item.age < 30;
+      });
+
+      //Assert
+      equal(anyUnder30, expectedValue);
+    });
+
+    test("Aggregate (kinda)", function () {
+
+      //Arrange
+      var expectedValue = { name: '', age: 210 };
+
+      //Act
+      var aggregate = people.reduce(function (item1, item2) {
+        return { name: '', age: item1.age + item2.age };
+      });
+
+      //Assert
+      deepEqual(aggregate, expectedValue);
+    });
+
+    test("OrderBy (kinda)", function () {
+
+      //Arrange
+      var expectedValue = [
+        { name: "Arthur", age: 78 },
+        { name: "John", age: 20 },
+        { name: "Judy", age: 42 },
+        { name: "Mary", age: 35 },
+        { name: "Mike", age: 27 },
+        { name: "Tim", age: 8 }
+      ];
+
+      //Act
+      var orderedByName = people.sort(function (a, b) {
+        return a.name > b.name ? 1 : 0;
+      });
+
+      //Assert
+      deepEqual(orderedByName, expectedValue);
+    });
+
+    test("FirstOrDefault - found", function () {
+
+      //Arrange
+      var expectedValue = { name: "Mike", age: 27 };
+
+      //Act
+      var mikeOrDefault = people.filter(function (item) { return item.name === "Mike"; })[0] || null;
+
+      //Assert
+      deepEqual(mikeOrDefault, expectedValue);
+    });
+
+    test("FirstOrDefault - null", function () {
+
+      //Arrange
+      var expectedValue = null;
+
+      //Act
+      var mikeOrDefault = people.filter(function (item) { return item.name === "Ferdinand"; })[0] || null;
+
+      //Assert
+      deepEqual(mikeOrDefault, expectedValue);
+    });
+
+    test("Skip ", function () {
+
+      //Arrange
+      var expectedValue = [{ name: "Judy", age: 42 },
+      { name: "Tim", age: 8 }];
+
+      //Act
+      var skipped = people.slice(4);
+
+      //Assert
+      deepEqual(skipped, expectedValue);
+    });
+
+    test("Chaining", function () {
+
+      //Arrange
+      var expectedValue = [
+        "Mary",
+        "Judy",
+        "Arthur"
+      ];
+
+      //Act
+      var namesOfPeopleOver30OrderedDesc = people.filter(function (person) {
+        return person.age > 30;
+      }).
+        map(function (person) {
+          return person.name;
+        }).
+        sort(function (a, b) {
+          return a < b ? 1 : 0;
+        });
+
+      //Assert
+      deepEqual(namesOfPeopleOver30OrderedDesc, expectedValue);
+    });
+
+  </script>
+
+</body>
+
+</html>
